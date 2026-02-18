@@ -1,0 +1,15 @@
+{{template "base.html" .}}
+
+{{define "content"}}
+<form action="/ascii-art" method="post" >
+<label for="textarea">Enter text to convert to ASCII art:</label>
+<textarea id="textarea" name="input" rows="8" cols="60" maxlength="855" placeholder="text"></textarea>
+<input type="radio" id="standard" name="font" value="standard" checked>
+<label for="standard">Standard</label>
+<input type="radio" id="shadow" name="font" value="shadow">
+<label for="shadow">Shadow</label>
+<input type="radio" id="thinkertoy" name="font" value="thinkertoy">
+<label for="thinkertoy">Thinkertoy</label>
+<button type="submit">Convert</button>
+</form>
+{{end}}
