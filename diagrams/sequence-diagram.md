@@ -31,11 +31,11 @@ sequenceDiagram
     parser-->>main: Banner map[rune][]string
 
     main->>color: ANSI(rgb)
-    color-->>main: "\\033[38;2;R;G;Bm"
+    color-->>main: ANSI escape code string
 
     loop For each line in text
         main->>renderer: ASCII(line, banner)
-        renderer-->>main: string (ASCII art with \n)
+        renderer-->>main: string (ASCII art with newlines)
 
         main->>main: split rendered ASCII into artLines
 
@@ -44,7 +44,7 @@ sequenceDiagram
 
         main->>coloring: ApplyColor(artLines, line, substring, colorCode, widths)
 
-        Note over coloring: findPositions(line, substring)<br>colorLine() for each art line
+        Note over coloring: findPositions(line, substring) + colorLine() for each art line
 
         coloring-->>main: []string (colored lines)
     end
