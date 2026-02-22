@@ -39,6 +39,15 @@ import (
 type Application struct {
 	TemplateCache map[string]*template.Template
 }
+
+// PageData represents the dynamic data passed to HTML templates.
+//
+// It is used to inject runtime values into templates during execution.
+//
+// Fields:
+//
+//   - Result: the generated ASCII art string rendered inside the page.
+//     This value is displayed in the <pre> block of index.html.
 type PageData struct {
 	Result string
 }
