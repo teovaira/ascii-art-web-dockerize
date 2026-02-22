@@ -39,6 +39,9 @@ import (
 type Application struct {
 	TemplateCache map[string]*template.Template
 }
+type PageData struct {
+	Result string
+}
 
 // Home handles requests to the root route ("/").
 //
@@ -61,7 +64,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := ts.Execute(w, nil)
+	err := ts.Execute(w, PageData{Result: ""})
 	if err != nil {
 		http.Error(w, "Failed to connect to the internal service", http.StatusInternalServerError)
 	}
