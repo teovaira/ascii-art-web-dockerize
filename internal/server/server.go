@@ -21,9 +21,11 @@ func New(addr string) *Server {
 	mux.HandleFunc("/", handleHome)
 	mux.HandleFunc("/ascii-art", handleAsciiArt)
 
-	// Chain middleware: Recovery -> Logging -> Routes
+	// Chain middleware: Security -> Recovery -> Logging -> Routes
 	logger := log.New(os.Stdout, "", log.LstdFlags)
-	handler := middleware.Recovery(logger)(middleware.Logging(logger)(mux))
+	handler := middleware.SecurityHeaders(
+		middleware.Recovery(logger)(
+			middleware.Logging(logger)(mux)))
 
 	return &Server{
 		Server: &http.Server{

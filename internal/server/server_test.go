@@ -105,3 +105,25 @@ func TestServerMiddlewareChain(t *testing.T) {
 		t.Errorf("middleware chain broken: expected 200, got %d", w.Code)
 	}
 }
+
+func TestServerSecurityHeaders(t *testing.T) {
+	srv := New(":8080")
+
+	req := httptest.NewRequest("GET", "/", nil)
+	w := httptest.NewRecorder()
+	srv.Handler.ServeHTTP(w, req)
+
+	expectedHeaders := map[string]string{
+		"X-Content-Type-Options":  "nosniff",
+		"X-Frame-Options":         "DENY",
+		"X-XSS-Protection":        "1; mode=block",
+		"Content-Security-Policy": "default-src 'self'",
+	}
+
+	for name, want := range expectedHeaders {
+		got := w.Header().Get(name)
+		if got != want {
+			t.Errorf("header %s = %q, want %q", name, got, want)
+		}
+	}
+}
