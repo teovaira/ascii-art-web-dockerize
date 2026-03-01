@@ -2,7 +2,6 @@
 package server
 
 import (
-	"html/template"
 	"net/http"
 	"os"
 
@@ -13,13 +12,11 @@ import (
 )
 
 func Start(addr string) error {
-	// Initialize template cache
-	cache := make(map[string]*template.Template)
-	ts, err := template.ParseFiles("templates/base.html", "templates/index.html")
+	// Initialize template cache using Vasiliki's function
+	cache, err := web.NewTemplateCache()
 	if err != nil {
 		return err
 	}
-	cache["index.html"] = ts
 
 	// Create application with Vasiliki's handlers
 	app := &web.Application{
@@ -28,11 +25,11 @@ func Start(addr string) error {
 
 	// Serve static files
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
-	
+
 	// Use Vasiliki's handlers
 	http.HandleFunc("/", app.Home)
 	http.HandleFunc("/ascii-art", app.HandleAsciiArt)
-	
+
 	return http.ListenAndServe(addr, nil)
 }
 
@@ -64,4 +61,3 @@ func GenerateASCII(text, banner string) (string, int, error) {
 
 	return result, http.StatusOK, nil
 }
-

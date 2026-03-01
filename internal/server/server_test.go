@@ -1,88 +1,70 @@
 package server
 
 import (
-	"net/http"
-	"net/http/httptest"
-	"net/url"
 	"strings"
 	"testing"
 )
 
-func TestHandleHome(t *testing.T) {
+// TestGenerateASCII tests the core ASCII generation logic
+func TestGenerateASCII(t *testing.T) {
 	tests := []struct {
 		name       string
-		path       string
+		text       string
+		banner     string
 		wantStatus int
-	}{
-		{"root path", "/", http.StatusOK},
-		{"non-root path", "/other", http.StatusNotFound},
-	}
-
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
-			w := httptest.NewRecorder()
-			handleHome(w, req)
-			if w.Code != tt.wantStatus {
-				t.Errorf("handleHome() status = %v, want %v", w.Code, tt.wantStatus)
-			}
-		})
-	}
-}
-
-func TestHandleAsciiArt(t *testing.T) {
-	tests := []struct {
-		name       string
-		method     string
-		formData   url.Values
-		wantStatus int
+		wantErr    bool
 	}{
 		{
 			name:       "valid request",
-			method:     http.MethodPost,
-			formData:   url.Values{"text": {"Hello"}, "banner": {"standard"}},
-			wantStatus: http.StatusOK,
+			text:       "Hello",
+			banner:     "standard",
+			wantStatus: 200,
+			wantErr:    false,
 		},
 		{
 			name:       "default banner",
-			method:     http.MethodPost,
-			formData:   url.Values{"text": {"Hello"}},
-			wantStatus: http.StatusOK,
-		},
-		{
-			name:       "wrong method",
-			method:     http.MethodGet,
-			formData:   url.Values{},
-			wantStatus: http.StatusMethodNotAllowed,
+			text:       "Hello",
+			banner:     "",
+			wantStatus: 200,
+			wantErr:    false,
 		},
 		{
 			name:       "empty text",
-			method:     http.MethodPost,
-			formData:   url.Values{"text": {""}, "banner": {"standard"}},
-			wantStatus: http.StatusBadRequest,
+			text:       "",
+			banner:     "standard",
+			wantStatus: 400,
+			wantErr:    true,
 		},
 		{
 			name:       "text too long",
-			method:     http.MethodPost,
-			formData:   url.Values{"text": {strings.Repeat("a", 1001)}, "banner": {"standard"}},
-			wantStatus: http.StatusBadRequest,
+			text:       strings.Repeat("a", 1001),
+			banner:     "standard",
+			wantStatus: 400,
+			wantErr:    true,
 		},
 		{
 			name:       "invalid banner",
-			method:     http.MethodPost,
-			formData:   url.Values{"text": {"Hello"}, "banner": {"invalid"}},
-			wantStatus: http.StatusNotFound,
+			text:       "Hello",
+			banner:     "invalid",
+			wantStatus: 404,
+			wantErr:    true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			req := httptest.NewRequest(tt.method, "/ascii-art", strings.NewReader(tt.formData.Encode()))
-			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			w := httptest.NewRecorder()
-			handleAsciiArt(w, req)
-			if w.Code != tt.wantStatus {
-				t.Errorf("handleAsciiArt() status = %v, want %v", w.Code, tt.wantStatus)
+			result, status, err := GenerateASCII(tt.text, tt.banner)
+
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GenerateASCII() error = %v, wantErr %v", err, tt.wantErr)
+			}
+
+			if status != tt.wantStatus {
+				t.Errorf("GenerateASCII() status = %v, want %v", status, tt.wantStatus)
+			}
+
+			if !tt.wantErr && result == "" {
+				t.Errorf("GenerateASCII() returned empty result for valid input")
 			}
 		})
 	}
