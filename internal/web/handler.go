@@ -86,6 +86,14 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
+
+// HandleAsciiArt handles POST requests to generate ASCII art.
+//
+// It validates the HTTP method, parses form input (text and banner),
+// generates the ASCII art using the server layer, and renders the result
+// using the index.html template.
+//
+// On error, it responds with the appropriate HTTP status code.
 func (app *Application) HandleAsciiArt(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
