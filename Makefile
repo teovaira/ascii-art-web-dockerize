@@ -106,6 +106,19 @@ run-example:
 	@echo "${COLOUR_BLUE}Thinkertoy banner:${COLOUR_END}"
 	@cd cmd/ascii-art && go run . "ASCII" thinkertoy
 
+## run-web: Run the web server (must be run from project root)
+.PHONY: run-web
+run-web:
+	@go run ./cmd/ascii-art-web
+
+## build-web: Build the web server binary
+.PHONY: build-web
+build-web:
+	@echo "${COLOUR_BLUE}Building ascii-art-web...${COLOUR_END}"
+	@mkdir -p $(BUILD_DIR)
+	@go build -o $(BUILD_DIR)/ascii-art-web ./cmd/ascii-art-web
+	@echo "${COLOUR_GREEN}✓ Web binary built: $(BUILD_DIR)/ascii-art-web${COLOUR_END}"
+
 ## build: Build the binary
 .PHONY: build
 build:
