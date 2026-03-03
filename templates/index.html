@@ -3,7 +3,7 @@
 {{define "content"}}
 <form action="/ascii-art" method="post" >
 <label class="form-label" for="textarea">Enter text to convert to ASCII art:</label>
-<textarea id="textarea" name="text" rows="8" cols="60" maxlength="855" placeholder="text"></textarea>
+<textarea id="textarea" name="text" rows="8" cols="60" maxlength="1000" placeholder="text"></textarea>
 <fieldset class="radio-group">
     <legend class="radio-legend">Choose Font:</legend>
     <div class="radio-option">
@@ -22,6 +22,9 @@
 </fieldset>
 <button type="submit">Convert</button>
 </form>
+{{if .Error}}
+<p class="error-message">{{.Error}}</p>
+{{end}}
 {{if .Result}}
 <pre>{{.Result}}</pre>
 {{end}}
