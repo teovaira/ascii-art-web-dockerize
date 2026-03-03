@@ -41,3 +41,5 @@ coverage.html
 cpu.prof
 mem.prof
 
+# local settings
+.vscode/
