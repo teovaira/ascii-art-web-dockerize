@@ -46,7 +46,7 @@ main {
 /* ===== FORM CARD ===== */
 form {
     background: #2b2b2b;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 14px;
     width: 100%;
     max-width: 650px;
@@ -58,7 +58,7 @@ form {
 /* ===== FORM LABEL (textarea label only) ===== */
 .form-label {
     display: block;
-    margin-bottom: 0.6rem;
+    margin-bottom: 1rem;
     font-weight: 600;
     color: #c77dff;
 }
