@@ -153,11 +153,11 @@ func (app *Application) HandleASCIIArt(w http.ResponseWriter, r *http.Request) {
 
 	text := r.FormValue("text")
 	banner := r.FormValue("banner")
-	
+
 	// Normalize line endings: convert \r\n to \n
 	text = strings.ReplaceAll(text, "\r\n", "\n")
 	text = strings.ReplaceAll(text, "\r", "\n")
-	
+
 	result, status, err := GenerateASCII(text, banner)
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
