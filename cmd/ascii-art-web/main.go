@@ -1,6 +1,6 @@
 // Package main provides the ASCII art web server entry point.
 //
-// It reads the PORT environment variable (defaulting to 8080), initialises
+// It reads the PORT environment variable (defaulting to 8080), initializes
 // the HTML template cache, registers HTTP routes, and starts the server.
 //
 // Usage:
@@ -14,6 +14,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"ascii-art-web/internal/handlers"
 )
@@ -33,8 +34,14 @@ func main() {
 
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 	http.HandleFunc("/", app.Home)
-	http.HandleFunc("/ascii-art", app.HandleAsciiArt)
+	http.HandleFunc("/ascii-art", app.HandleASCIIArt)
+
+	srv := &http.Server{
+		Addr:         ":" + port,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
 
 	fmt.Printf("Server starting on http://localhost:%s\n", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(srv.ListenAndServe())
 }
