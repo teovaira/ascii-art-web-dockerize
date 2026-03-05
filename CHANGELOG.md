@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-05
+
+### Added
+- Web server (`cmd/ascii-art-web`) serving ASCII art via a browser interface
+  - `GET /` — renders the form page
+  - `POST /ascii-art` — generates and returns ASCII art in the page
+  - `GET /static/` — serves CSS and favicon assets
+- `internal/handlers` package merging HTTP logic and ASCII generation
+  - `Application` struct with `TemplateCache`
+  - `PageData` struct with `Result`, `Title`, and `Error` fields
+  - `GenerateASCII(text, banner string)` — validates input and renders ASCII art
+  - `Home` handler — serves the index page (GET only)
+  - `HandleASCIIArt` handler — handles form submission (POST only), re-renders page with result or error
+  - `NewTemplateCache()` — parses and caches HTML templates at startup
+- `internal/banners` package with `//go:embed *.txt` for standard, shadow, and thinkertoy banner files
+  - Banners are now baked into the binary at compile time
+  - Both CLI and web server use the embedded filesystem via `banners.FS`
+- `internal/validation` package for web input validation
+  - `ValidateText()` — rejects empty text and text longer than 1000 characters
+  - `ValidateBanner()` — rejects unknown banner names
+- Error feedback display in the web UI (`<p class="error-message">`) for invalid submissions
+- `.error-message` CSS rule in `static/style.css` with visible error styling
+- `run-web` and `build-web` Makefile targets
+- Integration tests for the web server (`cmd/ascii-art-web/integration_test.go`)
+  - 12 test cases using `httptest.NewServer` with real templates
+- Unit tests for `internal/handlers` (`TestHome_TableDriven`, `TestGenerateASCII`, `TestHandleASCIIArt`)
+- HTTP server timeouts (`ReadTimeout: 5s`, `WriteTimeout: 10s`) to prevent slow-client resource exhaustion
+- Favicon files (`favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `site.webmanifest`) in `static/`
+
+### Changed
+- `parser.LoadBanner()` now reads from `banners.FS` (embedded) instead of `os.DirFS(".")`
+  - CLI and web server both use the same embedded filesystem
+  - No banner files need to be present on disk at runtime
+- `HandleAsciiArt` renamed to `HandleASCIIArt` (Go acronym naming convention)
+- Web handler on error re-renders the template with `PageData{Error: ...}` instead of bare `http.Error`
+  - Status code is still set correctly (400, 404, 500)
+  - User sees error message inline on the same page
+- `maxlength` in the web form textarea updated from 855 to 1000 to match `MaxTextLength` in validation
+- HTTP server changed from `http.ListenAndServe` to `http.Server` with explicit timeouts
+- CI workflow `workflow_dispatch` trigger removed — CI runs only on push and pull_request
+
+### Removed
+- `internal/server` package (dissolved into `internal/handlers`)
+- `internal/web` package (dissolved into `internal/handlers`)
+
+---
+
 ## [1.1.0] - 2026-02-17
 
 ### Added
