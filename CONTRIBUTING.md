@@ -126,7 +126,7 @@ This project follows the official Go style guide and best practices:
    - Line length: 120 characters max
 
 2. **Naming Conventions**
-   - Package names: lowercase, single word (`parser`, `renderer`, `color`, `coloring`, `flagparser`)
+   - Package names: lowercase, single word (`parser`, `renderer`, `color`, `coloring`, `flagparser`, `handlers`, `banners`, `validation`)
    - Exported identifiers: PascalCase (`RenderText`, `BuildCharacterMap`)
    - Unexported identifiers: camelCase (`renderLine`, `validateInput`)
    - Constants: PascalCase or ALL_CAPS for clarity
@@ -167,9 +167,11 @@ This project follows the official Go style guide and best practices:
 ### Test Coverage Requirements
 
 - **Overall**: Aim for >90% coverage
+- **Validation package**: Must maintain 100% coverage
 - **Parser package**: Must maintain 100% coverage
 - **Renderer package**: Must maintain 100% coverage
-- **Main package**: Integration tests required
+- **Handlers package**: Must maintain >85% coverage
+- **Main packages**: Integration tests required
 
 ### Writing Tests
 
@@ -273,10 +275,16 @@ We use [Conventional Commits](https://www.conventionalcommits.org/) format:
 
 - `parser`: Parser package
 - `renderer`: Renderer package
-- `main`: Main package
+- `main`: CLI main package (`cmd/ascii-art`)
+- `web`: Web server main package (`cmd/ascii-art-web`)
+- `handlers`: Web handlers package
+- `banners`: Embedded banners package
+- `validation`: Input validation package
 - `color`: Color package
 - `coloring`: Coloring package
 - `flagparser`: Flagparser package
+- `templates`: HTML templates
+- `static`: CSS and static assets
 - `tests`: Test-related
 - `docs`: Documentation
 - `build`: Build/tooling
@@ -384,18 +392,32 @@ ascii-art-web/
 │   ├── flowchart.md           # Program execution flow
 │   └── sequence-diagram.md    # Color mode call sequence
 ├── cmd/
-│   └── ascii-art/
-│       ├── main.go            # CLI entry point
-│       ├── main_test.go       # Unit tests for main
-│       ├── integration_test.go # End-to-end tests
-│       └── testdata/          # Banner files and test fixtures
-│           ├── standard.txt
-│           ├── shadow.txt
-│           ├── thinkertoy.txt
-│           ├── corrupted.txt  # Test fixture
-│           ├── empty.txt      # Test fixture
-│           └── oversized.txt  # Test fixture
+│   ├── ascii-art/             # CLI entry point
+│   │   ├── main.go
+│   │   ├── main_test.go
+│   │   ├── integration_test.go
+│   │   └── testdata/          # Banner files and test fixtures
+│   │       ├── standard.txt
+│   │       ├── shadow.txt
+│   │       ├── thinkertoy.txt
+│   │       ├── corrupted.txt  # Test fixture
+│   │       ├── empty.txt      # Test fixture
+│   │       └── oversized.txt  # Test fixture
+│   └── ascii-art-web/         # Web server entry point
+│       ├── main.go
+│       └── integration_test.go
+├── static/                    # Static web assets
+│   ├── style.css
+│   └── favicon files
+├── templates/                 # HTML templates
+│   ├── base.html
+│   └── index.html
 └── internal/
+    ├── banners/               # Embedded banner files
+    │   ├── banners.go
+    │   ├── standard.txt
+    │   ├── shadow.txt
+    │   └── thinkertoy.txt
     ├── color/                 # Color specification parsing
     │   ├── color.go
     │   └── color_test.go
@@ -405,12 +427,19 @@ ascii-art-web/
     ├── flagparser/            # CLI argument validation
     │   ├── flagparser.go
     │   └── flagparser_test.go
+    ├── handlers/              # HTTP handlers and template cache
+    │   ├── handlers.go
+    │   ├── handlers_test.go
+    │   └── template_cache.go
     ├── parser/                # Banner file parsing
     │   ├── banner_parser.go
     │   └── parser_test.go
-    └── renderer/              # ASCII art rendering
-        ├── renderer.go
-        └── renderer_test.go
+    ├── renderer/              # ASCII art rendering
+    │   ├── renderer.go
+    │   └── renderer_test.go
+    └── validation/            # Web input validation
+        ├── validation.go
+        └── validation_test.go
 ```
 
 ## Common Tasks
