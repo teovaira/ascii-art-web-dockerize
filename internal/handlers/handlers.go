@@ -124,7 +124,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// HandleAsciiArt handles POST requests to generate ASCII art.
+// HandleASCIIArt handles POST requests to generate ASCII art.
 //
 // It validates the HTTP method, parses form input (text and banner),
 // generates the ASCII art, and renders the result using the index.html template.
@@ -133,7 +133,7 @@ func (app *Application) Home(w http.ResponseWriter, r *http.Request) {
 // visible to the user instead of returning a bare HTTP error response.
 //
 // On template failure, it responds with the appropriate HTTP status code.
-func (app *Application) HandleAsciiArt(w http.ResponseWriter, r *http.Request) {
+func (app *Application) HandleASCIIArt(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
@@ -156,7 +156,7 @@ func (app *Application) HandleAsciiArt(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(status)
-		ts.Execute(w, PageData{Title: "Home", Error: err.Error()})
+		_ = ts.Execute(w, PageData{Title: "Home", Error: err.Error()})
 		return
 	}
 
