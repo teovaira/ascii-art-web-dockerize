@@ -206,7 +206,7 @@ footer {
     color: #777;
 }
 
-/* ===== RESPONSIVE: tablet (768px – 1199px) ===== */
+/* ===== RESPONSIVE: tablet / iPad / Zenbook Fold (768px – 1199px) ===== */
 @media (min-width: 768px) and (max-width: 1199px) {
     header {
         font-size: 4rem;
@@ -225,6 +225,25 @@ footer {
 
     textarea {
         min-height: 180px;
+        font-size: 1.1rem;
+    }
+
+    .form-label {
+        font-size: 1.15rem;
+    }
+
+    .radio-legend {
+        font-size: 1.15rem;
+    }
+
+    .radio-option label {
+        padding: 11px 22px;
+        font-size: 1.1rem;
+    }
+
+    button {
+        font-size: 1.15rem;
+        padding: 1.1rem;
     }
 }
 
