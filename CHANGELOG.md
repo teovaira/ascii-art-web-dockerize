@@ -35,9 +35,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Favicon files (`favicon.ico`, `favicon-16x16.png`, `favicon-32x32.png`, `apple-touch-icon.png`, `android-chrome-192x192.png`, `android-chrome-512x512.png`, `site.webmanifest`) in `static/`
 
 ### Changed
-- `parser.LoadBanner()` now reads from `banners.FS` (embedded) instead of `os.DirFS(".")`
-  - CLI and web server both use the same embedded filesystem
-  - No banner files need to be present on disk at runtime
+- Web server now reads banners from `internal/banners` (embedded) instead of `os.DirFS(".")`
+  - The CLI was already using its own embedded FS (`cmd/ascii-art/banner.go`) — unchanged
+  - No banner files need to be present on disk at runtime for either binary
 - `HandleAsciiArt` renamed to `HandleASCIIArt` (Go acronym naming convention)
 - Web handler on error re-renders the template with `PageData{Error: ...}` instead of bare `http.Error`
   - Status code is still set correctly (400, 404, 500)
