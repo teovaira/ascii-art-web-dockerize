@@ -4,7 +4,7 @@ Instructions for AI coding agents working on the ascii-art-web project.
 
 ## Project Overview
 
-Go CLI application converting text to ASCII art with three banner styles (standard, shadow, thinkertoy) and optional ANSI 24-bit color support for full text or specific substrings. **Zero external dependencies** — Go standard library only.
+Go CLI and web application converting text to ASCII art with three banner styles (standard, shadow, thinkertoy) and optional ANSI 24-bit color support for full text or specific substrings. **Zero external dependencies** — Go standard library only.
 
 ## Quick Commands
 
@@ -12,7 +12,8 @@ Go CLI application converting text to ASCII art with three banner styles (standa
 # No external dependencies to install (Go standard library only)
 
 # Build
-make build
+make build         # CLI binary
+make build-web     # Web server binary
 
 # Test (run before every commit)
 make test          # All tests
@@ -24,10 +25,14 @@ make vet           # Static analysis
 make lint          # Linter checks (golangci-lint)
 make check         # All quality checks (fmt + vet + lint)
 
-# Run
+# Run CLI
 cd cmd/ascii-art && go run . "Hello" standard
 cd cmd/ascii-art && go run . --color=red "Hello"
 cd cmd/ascii-art && go run . --color=red He "Hello"
+
+# Run web server (must run from project root)
+make run-web
+# or: go run ./cmd/ascii-art-web
 ```
 
 ## Project Structure
@@ -54,18 +59,32 @@ ascii-art-web/
 │   ├── flowchart.md           # Program execution flow
 │   └── sequence-diagram.md    # Color mode call sequence
 ├── cmd/
-│   └── ascii-art/
-│       ├── main.go            # CLI entry point
-│       ├── main_test.go       # Unit tests for main package
-│       ├── integration_test.go # End-to-end tests
-│       └── testdata/          # Banner files and test fixtures
-│           ├── standard.txt
-│           ├── shadow.txt
-│           ├── thinkertoy.txt
-│           ├── corrupted.txt  # Test fixture
-│           ├── empty.txt      # Test fixture
-│           └── oversized.txt  # Test fixture
+│   ├── ascii-art/             # CLI entry point
+│   │   ├── main.go
+│   │   ├── main_test.go
+│   │   ├── integration_test.go
+│   │   └── testdata/          # Banner files and test fixtures
+│   │       ├── standard.txt
+│   │       ├── shadow.txt
+│   │       ├── thinkertoy.txt
+│   │       ├── corrupted.txt  # Test fixture
+│   │       ├── empty.txt      # Test fixture
+│   │       └── oversized.txt  # Test fixture
+│   └── ascii-art-web/         # Web server entry point
+│       ├── main.go
+│       └── integration_test.go
+├── static/                    # Static web assets
+│   ├── style.css
+│   └── favicon files
+├── templates/                 # HTML templates
+│   ├── base.html
+│   └── index.html
 └── internal/
+    ├── banners/               # Embedded banner files (//go:embed *.txt)
+    │   ├── banners.go
+    │   ├── standard.txt
+    │   ├── shadow.txt
+    │   └── thinkertoy.txt
     ├── color/                 # Color specification parsing
     │   ├── color.go
     │   └── color_test.go
@@ -75,12 +94,19 @@ ascii-art-web/
     ├── flagparser/            # CLI argument validation
     │   ├── flagparser.go
     │   └── flagparser_test.go
+    ├── handlers/              # HTTP handlers, ASCII generation, template cache
+    │   ├── handlers.go
+    │   ├── handlers_test.go
+    │   └── template_cache.go
     ├── parser/                # Banner file parsing (from fs.FS)
     │   ├── banner_parser.go
     │   └── parser_test.go
-    └── renderer/              # ASCII art rendering
-        ├── renderer.go
-        └── renderer_test.go
+    ├── renderer/              # ASCII art rendering
+    │   ├── renderer.go
+    │   └── renderer_test.go
+    └── validation/            # Web input validation
+        ├── validation.go
+        └── validation_test.go
 ```
 
 ## AI Assistant Guidelines
@@ -372,9 +398,13 @@ for scanner.Scan() {
 - **color**: Parse color formats -> ANSI codes (named, hex, RGB)
 - **coloring**: Apply ANSI codes to ASCII art at correct positions
 - **flagparser**: Validate CLI argument **structure** only
-- **parser**: Load and parse banner files from embedded filesystem
+- **banners**: Expose embedded banner files via `banners.FS` (`embed.FS`)
+- **parser**: Load and parse banner files from `fs.FS`
 - **renderer**: Convert text to ASCII art
-- **main**: Orchestrate all packages
+- **validation**: Validate web form input (text length, banner name)
+- **handlers**: HTTP handlers, `GenerateASCII`, template cache — used by web server
+- **main (cli)**: Orchestrate CLI packages
+- **main (web)**: Initialize template cache, register routes, start HTTP server
 
 ### Why Separate Packages?
 - **Testability**: Each package independently testable
@@ -435,7 +465,7 @@ Use Conventional Commits format:
 
 **Types**: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `chore`, `build`, `ci`
 
-**Scopes**: `parser`, `renderer`, `main`, `color`, `coloring`, `flagparser`, `docs`, `build`, `tests`, `workflows`
+**Scopes**: `parser`, `renderer`, `main`, `web`, `handlers`, `banners`, `validation`, `color`, `coloring`, `flagparser`, `templates`, `static`, `docs`, `build`, `tests`, `workflows`
 
 **Example**:
 ```
@@ -460,13 +490,12 @@ make build-all      # All platforms (Linux, macOS, Windows)
 Automated checks run on every push and pull request to `main` and `develop`:
 
 - **Test**: Runs `go test ./...` across a matrix of Go 1.21/1.22 on Ubuntu, macOS, and Windows
+- **Coverage**: Generates a coverage report and uploads it as a workflow artifact
 - **Lint**: Runs `golangci-lint` (v2.1.6) on Ubuntu using `.golangci.yml`
 - **Build**: Verifies compilation with `go build ./cmd/ascii-art` on Ubuntu
 
-All checks must pass before merge.
-
 Workflows are defined in `.github/workflows/`:
-- `ci.yml` — test, lint, and build jobs (triggered on push/PR)
+- `ci.yml` — test, coverage, lint, and build jobs (triggered on push/PR to main or develop)
 - `release.yml` — builds cross-platform binaries and creates a GitHub Release (triggered on `v*` tags)
 
 ### Version Management
@@ -487,12 +516,13 @@ Workflows are defined in `.github/workflows/`:
 ## Common Tasks
 
 ### Adding a New Banner Style
-1. Add banner file to `cmd/ascii-art/testdata/<name>.txt`
-2. Update `bannerPaths` map in `cmd/ascii-art/banner.go` to recognize new name
-3. Rebuild binary (files are embedded at compile time)
-4. Add integration test in `cmd/ascii-art/integration_test.go`
-5. Update README.md with new banner style
-6. Update CHANGELOG.md
+1. Add banner file to `internal/banners/<name>.txt` — it is picked up by `//go:embed *.txt`
+2. Add banner file to `cmd/ascii-art/testdata/<name>.txt` — used by CLI tests
+3. Update `bannerPaths` map in `cmd/ascii-art/banner.go` to recognize the new name (CLI)
+4. Update `ValidateBanner()` in `internal/validation/validation.go` to accept the new name (web)
+5. Rebuild binaries (files are embedded at compile time)
+6. Add integration tests for both CLI and web
+7. Update README.md and CHANGELOG.md
 
 ### Adding a Feature
 1. Discuss approach (architectural decision)
