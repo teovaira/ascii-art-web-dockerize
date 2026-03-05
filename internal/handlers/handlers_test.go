@@ -163,3 +163,89 @@ func TestGenerateASCII(t *testing.T) {
 		})
 	}
 }
+
+// TestHandleASCIIArt tests the HandleASCIIArt handler with multiple scenarios.
+func TestHandleASCIIArt(t *testing.T) {
+	tmpl := template.Must(template.New("index.html").Parse(
+		`{{if .Error}}ERROR:{{.Error}}{{end}}{{if .Result}}RESULT:{{.Result}}{{end}}`,
+	))
+
+	tests := []struct {
+		name           string
+		method         string
+		formData       string
+		template       *template.Template
+		expectedStatus int
+		expectedBody   string
+	}{
+		{
+			name:           "wrong method returns 405",
+			method:         http.MethodGet,
+			formData:       "",
+			template:       tmpl,
+			expectedStatus: http.StatusMethodNotAllowed,
+			expectedBody:   "Method not allowed",
+		},
+		{
+			name:           "template missing returns 404",
+			method:         http.MethodPost,
+			formData:       "text=Hello&banner=standard",
+			template:       nil,
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   "Not Found",
+		},
+		{
+			name:           "empty text returns 400 with error in body",
+			method:         http.MethodPost,
+			formData:       "text=&banner=standard",
+			template:       tmpl,
+			expectedStatus: http.StatusBadRequest,
+			expectedBody:   "ERROR:text cannot be empty",
+		},
+		{
+			name:           "invalid banner returns 404 with error in body",
+			method:         http.MethodPost,
+			formData:       "text=Hello&banner=invalid",
+			template:       tmpl,
+			expectedStatus: http.StatusNotFound,
+			expectedBody:   "ERROR:invalid banner name",
+		},
+		{
+			name:           "valid request returns 200 with result in body",
+			method:         http.MethodPost,
+			formData:       "text=Hi&banner=standard",
+			template:       tmpl,
+			expectedStatus: http.StatusOK,
+			expectedBody:   "RESULT:",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cache := make(map[string]*template.Template)
+			if tt.template != nil {
+				cache["index.html"] = tt.template
+			}
+
+			app := &Application{TemplateCache: cache}
+
+			req := httptest.NewRequest(tt.method, "/ascii-art", strings.NewReader(tt.formData))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			rr := httptest.NewRecorder()
+
+			app.HandleASCIIArt(rr, req)
+
+			res := rr.Result()
+			defer res.Body.Close()
+
+			if res.StatusCode != tt.expectedStatus {
+				t.Fatalf("expected status %d, got %d", tt.expectedStatus, res.StatusCode)
+			}
+
+			body := rr.Body.String()
+			if !strings.Contains(body, tt.expectedBody) {
+				t.Fatalf("expected body to contain %q, got %q", tt.expectedBody, body)
+			}
+		})
+	}
+}
