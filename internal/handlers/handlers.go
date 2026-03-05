@@ -156,7 +156,7 @@ func (app *Application) HandleASCIIArt(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(status)
-		_ = ts.Execute(w, PageData{Title: "Home", Error: err.Error()})
+		_ = ts.Execute(w, PageData{Title: "Home", Error: err.Error()}) //nolint:errcheck
 		return
 	}
 
