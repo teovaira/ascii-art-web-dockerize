@@ -32,6 +32,7 @@ type RGB struct {
 	R, G, B uint8
 }
 
+// namedColors maps lowercase color names to their RGB values.
 var namedColors = map[string]RGB{
 	"black":   {0, 0, 0},
 	"red":     {255, 0, 0},

@@ -1,3 +1,12 @@
+// Package main provides the ASCII art web server entry point.
+//
+// It reads the PORT environment variable (defaulting to 8080), initialises
+// the HTML template cache, registers HTTP routes, and starts the server.
+//
+// Usage:
+//
+//	go run ./cmd/ascii-art-web
+//	PORT=9090 go run ./cmd/ascii-art-web
 package main
 
 import (
