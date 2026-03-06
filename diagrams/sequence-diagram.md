@@ -1,6 +1,8 @@
 # Sequence Diagram
 
-Call sequence for **color mode** — the more complex execution path. Shows how `main` orchestrates all packages over time.
+## CLI — Color Mode
+
+Call sequence for **color mode** — the more complex CLI execution path. Shows how `main` orchestrates all packages over time.
 
 ```mermaid
 sequenceDiagram
@@ -52,7 +54,7 @@ sequenceDiagram
     main->>User: Colored ASCII art to stdout
 ```
 
-## Normal Mode (simplified)
+## CLI — Normal Mode
 
 For comparison, normal mode has a much shorter sequence:
 
@@ -74,4 +76,58 @@ sequenceDiagram
     renderer-->>main: ASCII art string
 
     main->>User: Plain ASCII art to stdout
+```
+
+## Web — HTTP Request/Response
+
+Call sequence for a browser form submission through the web server.
+
+```mermaid
+sequenceDiagram
+    actor Browser
+    participant main as main (web)
+    participant handlers
+    participant validation
+    participant parser
+    participant renderer
+
+    Note over main: startup — NewTemplateCache() + register routes
+
+    Browser->>main: GET /
+    main->>handlers: app.Home(w, r)
+    handlers-->>Browser: 200 OK — index.html with form
+
+    Browser->>main: POST /ascii-art (text, banner)
+    main->>handlers: app.HandleASCIIArt(w, r)
+
+    handlers->>handlers: r.ParseForm()
+    handlers->>handlers: GenerateASCII(text, banner)
+
+    handlers->>validation: ValidateText(text)
+    alt invalid text
+        validation-->>handlers: ErrEmptyText / ErrTextTooLong
+        handlers-->>Browser: 400 Bad Request — page with error message
+    end
+
+    handlers->>validation: ValidateBanner(banner)
+    alt invalid banner
+        validation-->>handlers: ErrInvalidBanner
+        handlers-->>Browser: 404 Not Found — page with error message
+    end
+
+    handlers->>parser: LoadBanner(banners.FS, banner+".txt")
+    alt banner file missing
+        parser-->>handlers: error
+        handlers-->>Browser: 404 Not Found — page with error message
+    end
+    parser-->>handlers: Banner map[rune][]string
+
+    handlers->>renderer: ASCII(text, banner)
+    alt render error
+        renderer-->>handlers: error
+        handlers-->>Browser: 500 Internal Server Error — page with error message
+    end
+    renderer-->>handlers: ASCII art string
+
+    handlers-->>Browser: 200 OK — page with ASCII art in pre block
 ```

@@ -1,10 +1,10 @@
 # Class Diagram
 
-Package relationships, exported types, and function signatures. All internal packages are independent — only `main` imports them.
+Package relationships, exported types, and function signatures.
 
 ```mermaid
 classDiagram
-    class main {
+    class climain["main (cli)"] {
         +main()
         +ParseArgs(args []string) (string, string, error)
         +GetBannerPath(banner string) (string, error)
@@ -12,6 +12,46 @@ classDiagram
         -runColorMode(args []string)
         -hasColorFlag(args []string) bool
         -extractColorArgs(args []string) (string, string, string, string, error)
+    }
+
+    class webmain["main (web)"] {
+        +main()
+    }
+
+    class handlers {
+        <<package>>
+        +NewTemplateCache() (map[string]*template.Template, error)
+    }
+
+    class Application {
+        <<struct>>
+        +TemplateCache map[string]*template.Template
+        +Home(w, r)
+        +HandleASCIIArt(w, r)
+    }
+
+    class PageData {
+        <<struct>>
+        +Result string
+        +Title string
+        +Error string
+    }
+
+    class GenerateASCII {
+        <<function>>
+        +GenerateASCII(text, banner string) (string, int, error)
+    }
+
+    class validation {
+        <<package>>
+        +ValidateText(text string) error
+        +ValidateBanner(banner string) error
+        +MaxTextLength int
+    }
+
+    class banners {
+        <<package>>
+        +FS embed.FS
     }
 
     class parser {
@@ -54,20 +94,26 @@ classDiagram
         +ParseArgs(args []string) error
     }
 
-    main --> parser : loads banners
-    main --> renderer : renders text
-    main --> color : parses colors
-    main --> coloring : applies colors
-    main --> flagparser : validates args
+    webmain --> handlers : initializes
+    handlers --> Application : creates
+    Application --> PageData : renders with
+    Application --> GenerateASCII : calls
+    GenerateASCII --> validation : validates input
+    GenerateASCII --> parser : loads banner
+    GenerateASCII --> renderer : renders text
+    parser --> banners : reads FS
+    climain --> parser : loads banners
+    climain --> renderer : renders text
+    climain --> color : parses colors
+    climain --> coloring : applies colors
+    climain --> flagparser : validates args
     parser --> Banner : returns
     color --> RGB : returns
-    parser ..> Banner : defines
-    color ..> RGB : defines
 ```
 
 ## Dependency Rules
 
-- `main` depends on all five internal packages
-- No internal package imports another internal package
+- Neither `parser`, `renderer`, `validation`, `coloring`, `color`, nor `flagparser` imports any other internal package
+- `handlers` imports `parser`, `renderer`, `validation`, and `banners` — no cycles
+- Both `main` packages are the only entry points that wire everything together
 - All packages depend only on the Go standard library
-- This ensures packages can be tested, reused, and maintained independently
