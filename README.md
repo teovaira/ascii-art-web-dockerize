@@ -32,12 +32,12 @@ git clone https://github.com/teovaira/ascii-art-web.git
 cd ascii-art-web
 
 # Build CLI binary
-make build
-# or: go build -o bin/ascii-art ./cmd/ascii-art
+go build -o bin/ascii-art ./cmd/ascii-art
+# or: make build
 
 # Build web server binary
-make build-web
-# or: go build -o bin/ascii-art-web ./cmd/ascii-art-web
+go build -o bin/ascii-art-web ./cmd/ascii-art-web
+# or: make build-web
 ```
 
 ## Usage
@@ -48,8 +48,8 @@ make build-web
 
 ```bash
 # Run from repository root
-make run-web
-# or: go run ./cmd/ascii-art-web
+go run ./cmd/ascii-art-web
+# or: make run-web
 
 # Run the built binary — must also be from repository root
 ./bin/ascii-art-web
@@ -140,22 +140,28 @@ cd cmd/ascii-art && go run . "Hello\nWorld"
 
 ```bash
 # Run tests
-make test
+go test ./...
+# or: make test
 
 # Run with coverage
-make coverage
+go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out
+# or: make coverage
 
 # Run linters
-make lint
+golangci-lint run ./...
+# or: make lint
 
 # Format code
-make fmt
+gofmt -w .
+# or: make fmt
 
-# Run web server
-make run-web
+# Run web server (from project root)
+go run ./cmd/ascii-art-web
+# or: make run-web
 
 # Run CLI with color mode
-make run-color
+cd cmd/ascii-art && go run . --color=red "Hello World"
+# or: make run-color
 ```
 
 ### Project Structure
