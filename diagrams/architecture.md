@@ -5,31 +5,31 @@ High-level view of the system architecture. Packages are grouped by responsibili
 ```mermaid
 flowchart LR
     subgraph CLILayer["CLI Layer"]
-        main["main\n(cmd/ascii-art)"]
+        main["main<br/>(cmd/ascii-art)"]
     end
 
     subgraph WebLayer["Web Layer"]
-        webmain["main\n(cmd/ascii-art-web)"]
-        handlers["handlers\nHTTP handlers"]
+        webmain["main<br/>(cmd/ascii-art-web)"]
+        handlers["handlers<br/>HTTP handlers"]
     end
 
     subgraph Shared["Shared Infrastructure"]
-        banners["banners\nEmbedded .txt files"]
-        validation["validation\nInput validation"]
+        banners["banners<br/>Embedded .txt files"]
+        validation["validation<br/>Input validation"]
     end
 
     subgraph Input["Input Processing"]
-        flagparser["flagparser\nCLI validation"]
-        color["color\nColor parsing"]
+        flagparser["flagparser<br/>CLI validation"]
+        color["color<br/>Color parsing"]
     end
 
     subgraph Core["Core Engine"]
-        parser["parser\nBanner loading"]
-        renderer["renderer\nASCII rendering"]
+        parser["parser<br/>Banner loading"]
+        renderer["renderer<br/>ASCII rendering"]
     end
 
     subgraph Output["Output Processing"]
-        coloring["coloring\nANSI color application"]
+        coloring["coloring<br/>ANSI color application"]
     end
 
     main -->|"validates args"| flagparser
