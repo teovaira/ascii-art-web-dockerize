@@ -201,6 +201,49 @@ build-windows:
 	@echo "${COLOUR_GREEN}✓ Windows binary built${COLOUR_END}"
 
 # ==================================================================================== #
+# DOCKER
+# ==================================================================================== #
+
+# Docker image and container names (must match audits.txt expectations)
+DOCKER_IMAGE=ascii-art-web-docker
+DOCKER_CONTAINER=dockerize
+DOCKER_PORT=8080
+
+## docker-build: Build the Docker image
+.PHONY: docker-build
+docker-build:
+	@echo "${COLOUR_BLUE}Building Docker image '$(DOCKER_IMAGE)'...${COLOUR_END}"
+	@docker image build -f Dockerfile -t $(DOCKER_IMAGE) .
+	@echo "${COLOUR_GREEN}✓ Image built${COLOUR_END}"
+
+## docker-run: Run the container (stops any existing one first)
+.PHONY: docker-run
+docker-run:
+	@docker container rm $(DOCKER_CONTAINER) 2>/dev/null || true
+	@echo "${COLOUR_BLUE}Starting container '$(DOCKER_CONTAINER)'...${COLOUR_END}"
+	@docker container run \
+		--publish $(DOCKER_PORT):$(DOCKER_PORT) \
+		--detach \
+		--name $(DOCKER_CONTAINER) \
+		$(DOCKER_IMAGE)
+	@echo "${COLOUR_GREEN}✓ Container running at http://localhost:$(DOCKER_PORT)${COLOUR_END}"
+
+## docker-stop: Stop and remove the container
+.PHONY: docker-stop
+docker-stop:
+	@echo "${COLOUR_BLUE}Stopping container '$(DOCKER_CONTAINER)'...${COLOUR_END}"
+	@docker container stop $(DOCKER_CONTAINER) 2>/dev/null || true
+	@docker container rm   $(DOCKER_CONTAINER) 2>/dev/null || true
+	@echo "${COLOUR_GREEN}✓ Container stopped${COLOUR_END}"
+
+## docker-clean: Stop container and remove image
+.PHONY: docker-clean
+docker-clean: docker-stop
+	@echo "${COLOUR_BLUE}Removing image '$(DOCKER_IMAGE)'...${COLOUR_END}"
+	@docker image rm $(DOCKER_IMAGE) 2>/dev/null || true
+	@echo "${COLOUR_GREEN}✓ Image removed${COLOUR_END}"
+
+# ==================================================================================== #
 # CLEANUP
 # ==================================================================================== #
 
