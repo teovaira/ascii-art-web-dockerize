@@ -55,8 +55,10 @@ ascii-art-web-dockerize/
 │       └── release.yml        # Release workflow (cross-platform binaries)
 ├── .gitignore                 # Git ignore rules
 ├── .golangci.yml              # Linter configuration
+├── Dockerfile                 # Multi-stage Docker build
+├── docker-build.sh            # Helper script: build image + run container
 ├── LICENSE                    # Project license
-├── Makefile                   # Build automation
+├── Makefile                   # Build automation (incl. docker-* targets)
 ├── go.mod                     # Go module file (no external deps)
 ├── AGENTS.md                  # This file
 ├── CHANGELOG.md               # Version history
@@ -478,7 +480,7 @@ Use Conventional Commits format:
 
 **Types**: `feat`, `fix`, `docs`, `test`, `refactor`, `perf`, `chore`, `build`, `ci`
 
-**Scopes**: `parser`, `renderer`, `main`, `web`, `handlers`, `banners`, `validation`, `color`, `coloring`, `flagparser`, `templates`, `static`, `docs`, `build`, `tests`, `workflows`
+**Scopes**: `parser`, `renderer`, `main`, `web`, `handlers`, `banners`, `validation`, `color`, `coloring`, `flagparser`, `templates`, `static`, `docker`, `docs`, `build`, `tests`, `workflows`
 
 **Example**:
 ```
