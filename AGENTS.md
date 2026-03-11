@@ -11,6 +11,16 @@ Go CLI and web application converting text to ASCII art with three banner styles
 ```bash
 # No external dependencies to install (Go standard library only)
 
+# Docker (requires Docker installed)
+make docker-build  # Build the Docker image (ascii-art-web-docker)
+make docker-run    # Run the container (dockerize) on port 8080
+make docker-stop   # Stop and remove the container
+make docker-clean  # Stop container + remove image
+# Or use the helper script:
+./docker-build.sh          # Build image + start container
+./docker-build.sh stop     # Stop and remove container
+./docker-build.sh clean    # Stop container + remove image
+
 # Build
 make build         # CLI binary
 make build-web     # Web server binary
