@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-03-11
+
+### Added
+- `Dockerfile` — multi-stage build: `golang:1.22-alpine` compiles the binary, `alpine:3.19` runs it
+  - `CGO_ENABLED=0` produces a fully static binary with no C runtime dependency
+  - `bash` installed in the final image for auditor `docker exec` access
+  - OCI metadata labels: `maintainer`, `title`, `description`, `version`, `source`, `licenses`
+  - `CMD ["./server"]` — exec form ensures SIGTERM reaches the process directly (graceful shutdown)
+  - `EXPOSE 8080` documents the port
+- `docker-build.sh` — helper shell script wrapping Docker commands
+  - `./docker-build.sh` — builds image `ascii-art-web-docker` and starts container `dockerize` on port 8080
+  - `./docker-build.sh stop` — stops and removes the container
+  - `./docker-build.sh clean` — stops container and removes image
+- Makefile `docker-*` targets: `docker-build`, `docker-run`, `docker-stop`, `docker-clean`
+
+### Changed
+- Go module renamed from `ascii-art-web` to `ascii-art-web-dockerize`
+  - `go.mod` module declaration updated
+  - All internal import paths updated across every `.go` file
+
+---
+
 ## [1.2.0] - 2026-03-05
 
 ### Added
