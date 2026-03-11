@@ -114,7 +114,7 @@ run-web:
 ## build-web: Build the web server binary
 .PHONY: build-web
 build-web:
-	@echo "${COLOUR_BLUE}Building ascii-art-web...${COLOUR_END}"
+	@echo "${COLOUR_BLUE}Building ascii-art-web-dockerize...${COLOUR_END}"
 	@mkdir -p $(BUILD_DIR)
 	@go build -o $(BUILD_DIR)/ascii-art-web ./cmd/ascii-art-web
 	@echo "${COLOUR_GREEN}✓ Web binary built: $(BUILD_DIR)/ascii-art-web${COLOUR_END}"

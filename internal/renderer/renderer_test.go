@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"ascii-art-web/internal/renderer"
+	"ascii-art-web-dockerize/internal/renderer"
 )
 
 func TestEmptyInput(t *testing.T) {

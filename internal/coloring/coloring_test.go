@@ -4,7 +4,7 @@ import (
 	"strings"
 	"testing"
 
-	"ascii-art-web/internal/coloring"
+	"ascii-art-web-dockerize/internal/coloring"
 )
 
 func TestApplyColor_AdvancedCases(t *testing.T) {

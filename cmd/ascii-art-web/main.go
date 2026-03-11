@@ -16,7 +16,7 @@ import (
 	"os"
 	"time"
 
-	"ascii-art-web/internal/handlers"
+	"ascii-art-web-dockerize/internal/handlers"
 )
 
 func main() {

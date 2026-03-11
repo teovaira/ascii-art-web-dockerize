@@ -1,6 +1,6 @@
 # Contributing to ASCII Art Web
 
-Thank you for your interest in contributing to the ascii-art-web project! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to the ascii-art-web-dockerize project! This document provides guidelines and instructions for contributing.
 
 ## Table of Contents
 
@@ -35,8 +35,8 @@ This project is part of the Zone01 curriculum. We expect all contributors to:
 
 1. **Fork and clone the repository**
    ```bash
-   git clone https://github.com/yourusername/ascii-art-web.git
-   cd ascii-art-web
+   git clone https://github.com/yourusername/ascii-art-web-dockerize.git
+   cd ascii-art-web-dockerize
    ```
 
 2. **Verify Go installation**
@@ -371,7 +371,7 @@ When creating a PR, include:
 ## Project Structure
 
 ```
-ascii-art-web/
+ascii-art-web-dockerize/
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml             # CI workflow (test, lint, build)
@@ -501,4 +501,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ---
 
-Thank you for contributing to ascii-art-web!
+Thank you for contributing to ascii-art-web-dockerize!

@@ -3,7 +3,7 @@ package color_test
 import (
 	"testing"
 
-	"ascii-art-web/internal/color"
+	"ascii-art-web-dockerize/internal/color"
 )
 
 func TestParse(t *testing.T) {

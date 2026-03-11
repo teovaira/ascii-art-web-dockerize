@@ -24,8 +24,8 @@ import (
 	"fmt"
 	"os"
 
-	"ascii-art-web/internal/parser"
-	"ascii-art-web/internal/renderer"
+	"ascii-art-web-dockerize/internal/parser"
+	"ascii-art-web-dockerize/internal/renderer"
 )
 
 const (

@@ -1,6 +1,6 @@
 # AGENTS.md
 
-Instructions for AI coding agents working on the ascii-art-web project.
+Instructions for AI coding agents working on the ascii-art-web-dockerize project.
 
 ## Project Overview
 
@@ -48,7 +48,7 @@ make run-web
 ## Project Structure
 
 ```
-ascii-art-web/
+ascii-art-web-dockerize/
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml             # CI workflow (test, lint, build)

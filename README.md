@@ -1,6 +1,6 @@
-# ascii-art-web
+# ascii-art-web-dockerize
 
-![CI](https://github.com/teovaira/ascii-art-web/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/teovaira/ascii-art-web-dockerize/actions/workflows/ci.yml/badge.svg)
 
 ## Description
 
@@ -28,8 +28,8 @@ ASCII Art Generator — a CLI tool and web application written in Go that conver
 
 ```bash
 # Clone the repository
-git clone https://github.com/teovaira/ascii-art-web.git
-cd ascii-art-web
+git clone https://github.com/teovaira/ascii-art-web-dockerize.git
+cd ascii-art-web-dockerize
 
 # Build CLI binary
 go build -o bin/ascii-art ./cmd/ascii-art
@@ -167,7 +167,7 @@ cd cmd/ascii-art && go run . --color=red "Hello World"
 ### Project Structure
 
 ```
-ascii-art-web/
+ascii-art-web-dockerize/
 ├── .github/
 │   └── workflows/
 │       ├── ci.yml             # CI workflow (test, lint, build)

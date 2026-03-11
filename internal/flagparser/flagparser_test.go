@@ -3,7 +3,7 @@ package flagparser_test
 import (
 	"testing"
 
-	"ascii-art-web/internal/flagparser"
+	"ascii-art-web-dockerize/internal/flagparser"
 )
 
 func TestParseArgs(t *testing.T) {

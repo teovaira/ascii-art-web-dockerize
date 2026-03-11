@@ -34,7 +34,7 @@ FROM alpine:3.19
 # Metadata — the audit requires metadata applied to Docker objects.
 # ---------------------------------------------------------------------------
 LABEL maintainer="teovaira"
-LABEL org.opencontainers.image.title="ascii-art-web"
+LABEL org.opencontainers.image.title="ascii-art-web-dockerize"
 LABEL org.opencontainers.image.description="ASCII art generator web application written in Go"
 LABEL org.opencontainers.image.version="1.0.0"
 LABEL org.opencontainers.image.source="https://github.com/teovaira/ascii-art-web-dockerize"

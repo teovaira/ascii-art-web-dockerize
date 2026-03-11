@@ -26,10 +26,10 @@ import (
 	"net/http"
 	"strings"
 
-	"ascii-art-web/internal/banners"
-	"ascii-art-web/internal/parser"
-	"ascii-art-web/internal/renderer"
-	"ascii-art-web/internal/validation"
+	"ascii-art-web-dockerize/internal/banners"
+	"ascii-art-web-dockerize/internal/parser"
+	"ascii-art-web-dockerize/internal/renderer"
+	"ascii-art-web-dockerize/internal/validation"
 )
 
 // Application represents the web application container.

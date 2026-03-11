@@ -9,7 +9,7 @@ import (
 	"strings"
 	"testing"
 
-	"ascii-art-web/internal/handlers"
+	"ascii-art-web-dockerize/internal/handlers"
 )
 
 // newTestServer builds a real server using the actual template cache and
