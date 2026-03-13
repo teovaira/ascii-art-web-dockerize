@@ -29,21 +29,31 @@ ASCII Art Generator — a CLI tool and web application written in Go that conver
 ### Run with Docker
 
 ```bash
-# Build the image and start the container (port 8080)
-./docker-build.sh
-# or step by step:
+# 1. Build the Docker image
 docker image build -f Dockerfile -t ascii-art-web-docker .
+# or: make docker-build
+
+# 2. Start the container on port 8080
 docker container run --publish 8080:8080 --detach --name dockerize ascii-art-web-docker
+# or: make docker-run
+
+# One-step shortcut (build + run):
+./docker-build.sh
 ```
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
 
 ```bash
 # Stop and remove the container
-./docker-build.sh stop
+docker container stop dockerize && docker container rm dockerize
+# or: make docker-stop
+# or: ./docker-build.sh stop
 
-# Stop container and remove image
-./docker-build.sh clean
+# Stop container and remove the image
+docker container stop dockerize && docker container rm dockerize
+docker image rm ascii-art-web-docker
+# or: make docker-clean
+# or: ./docker-build.sh clean
 ```
 
 ### Build from source
@@ -68,8 +78,16 @@ go build -o bin/ascii-art-web ./cmd/ascii-art-web
 
 **Via Docker (recommended):**
 ```bash
-./docker-build.sh          # build image + start container on port 8080
-# or: make docker-build && make docker-run
+# Build the image
+docker image build -f Dockerfile -t ascii-art-web-docker .
+# or: make docker-build
+
+# Run the container
+docker container run --publish 8080:8080 --detach --name dockerize ascii-art-web-docker
+# or: make docker-run
+
+# One-step shortcut (build + run):
+./docker-build.sh
 ```
 
 **From source** (must run from repository root — server reads `templates/` and `static/` as relative paths):
@@ -297,10 +315,33 @@ make build-windows  # Windows (amd64)
 ### Docker Commands
 
 ```bash
-make docker-build   # Build the Docker image (ascii-art-web-docker)
-make docker-run     # Run the container (dockerize) on port 8080
-make docker-stop    # Stop and remove the container
-make docker-clean   # Stop container + remove image
+# Build the image
+docker image build -f Dockerfile -t ascii-art-web-docker .
+# or: make docker-build
+
+# Run the container (detached, port 8080)
+docker container run --publish 8080:8080 --detach --name dockerize ascii-art-web-docker
+# or: make docker-run
+
+# Stop and remove the container
+docker container stop dockerize && docker container rm dockerize
+# or: make docker-stop
+
+# Stop container + remove image (full cleanup)
+docker container stop dockerize && docker container rm dockerize && docker image rm ascii-art-web-docker
+# or: make docker-clean
+
+# Inspect image metadata (LABEL values)
+docker image inspect ascii-art-web-docker
+
+# Open a shell inside the running container
+docker exec -it dockerize /bin/bash
+
+# List all images
+docker images
+
+# List all containers (running and stopped)
+docker ps -a
 ```
 
 ## Architecture
