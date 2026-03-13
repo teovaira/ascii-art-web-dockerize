@@ -12,14 +12,32 @@ Go CLI and web application converting text to ASCII art with three banner styles
 # No external dependencies to install (Go standard library only)
 
 # Docker (requires Docker installed)
-make docker-build  # Build the Docker image (ascii-art-web-docker)
-make docker-run    # Run the container (dockerize) on port 8080
-make docker-stop   # Stop and remove the container
-make docker-clean  # Stop container + remove image
-# Or use the helper script:
-./docker-build.sh          # Build image + start container
-./docker-build.sh stop     # Stop and remove container
-./docker-build.sh clean    # Stop container + remove image
+# Build the image:
+docker image build -f Dockerfile -t ascii-art-web-docker .
+# or: make docker-build
+
+# Run the container on port 8080:
+docker container run --publish 8080:8080 --detach --name dockerize ascii-art-web-docker
+# or: make docker-run
+
+# Stop and remove the container:
+docker container stop dockerize && docker container rm dockerize
+# or: make docker-stop
+
+# Full cleanup (container + image):
+docker container stop dockerize && docker container rm dockerize && docker image rm ascii-art-web-docker
+# or: make docker-clean
+
+# One-step shortcut (build + run):
+./docker-build.sh
+./docker-build.sh stop     # stop and remove container
+./docker-build.sh clean    # stop container + remove image
+
+# Inspect, shell, list:
+docker image inspect ascii-art-web-docker   # read LABEL metadata
+docker exec -it dockerize /bin/bash         # open shell inside container
+docker images                               # list all images
+docker ps -a                                # list all containers
 
 # Build
 make build         # CLI binary
