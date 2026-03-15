@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `./docker-build.sh stop` — stops and removes the container
   - `./docker-build.sh clean` — stops container and removes image
 - Makefile `docker-*` targets: `docker-build`, `docker-run`, `docker-stop`, `docker-clean`
+- `.dockerignore` — excludes `.git/`, docs, diagrams, CI config, test artifacts, and tooling files from the Docker build context, reducing context transfer size and preventing unrelated file changes from busting the `COPY . .` layer cache
 
 ### Changed
 - Go module renamed from `ascii-art-web` to `ascii-art-web-dockerize`
