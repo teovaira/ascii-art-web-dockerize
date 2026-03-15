@@ -1,0 +1,43 @@
+# Git history — not needed to build the binary
+.git/
+.github/
+
+# Local editor settings
+.vscode/
+
+# Build artifacts that shouldn't bleed into the image
+bin/
+*.exe
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+*.prof
+coverage.out
+coverage.html
+
+# Docker files themselves
+Dockerfile
+.dockerignore
+docker-build.sh
+
+# Docs / diagrams
+diagrams/
+*.md
+LICENSE
+
+# Audit / spec files
+audits.txt
+specs.txt
+
+# CI config
+.golangci.yml
+
+# Go workspace files
+go.work
+go.work.sum
+.env
+
+# Makefile
+Makefile
